@@ -77,10 +77,4 @@ npm run test
 
 Contributions are welcome! Please open an issue or submit a pull request with any improvements or bug fixes.
 
-## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-Feel free to customize this README.md according to your specific application's features, configuration, and requirements. Additionally, you may want to include sections on database seeding, Docker setup, or any other relevant information.
