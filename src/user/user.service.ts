@@ -42,13 +42,12 @@ export class UserService {
   }
 
   async validateUser(email: string, password: string): Promise<AccessToken> {
-    const user = await this.userModel.findOne({ email }).exec();
+    const user = await this.userModel.findOne({ email }).select('+password').exec();
 
-    if (!user || !(await bcrypt.compare(password, user.password ?? ''))) {
-      throw new UnauthorizedException('Invalid email or password');
+    if (!user || !(await bcrypt.compare(password, user?.password ))) {      
+      throw new UnauthorizedException('Invalid email or Password');
     }
     const payload = { sub: user._id, username: user.email };
-
     return {
       access_token: await this.jwtService.signAsync(payload),
     };

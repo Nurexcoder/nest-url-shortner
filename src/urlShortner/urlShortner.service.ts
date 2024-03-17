@@ -31,15 +31,16 @@ export class UrlShortnerService {
   async findOneByHash(urlId: string): Promise<UrlShortner | null> {
     return this.urlShortnerModal.findOne({ urlId }).exec();
   }
-
+  
   async createUrlShortner(
-    createUrlShortnerDto: CreateUrlShortnerDto,
+      originalUrl: string,
+      userId: string
   ): Promise<string> {
-    const { originalUrl, userId } = createUrlShortnerDto;
-
+   
     const isUrlExist = await this.urlShortnerModal
       .findOne({ originalUrl })
       .exec();
+    
 
     if (isUrlExist) {
       isUrlExist.userIds.push(userId);
@@ -65,11 +66,9 @@ export class UrlShortnerService {
   }
 
   async getOriginalUrl(shortUrl: string): Promise<string | null> {
-    console.log(shortUrl);
     const originalUrl = (
       await this.urlShortnerModal.findOne({ shortUrl }).exec()
     ).originalUrl;
-    console.log(originalUrl);
     return originalUrl;
   }
 }

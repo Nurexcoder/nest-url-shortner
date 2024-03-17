@@ -1,15 +1,20 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { CreateUrlShortnerDto } from './dto/CreateUrlShortner.dto';
 import { UrlShortnerService } from './urlShortner.service';
 import { AuthGuard } from '@nestjs/passport';
+import { userGuard } from 'src/user/user.guard';
 
 @Controller('urlShortner')
 export class UrlShortnerController {
   constructor(private urlShortnerService: UrlShortnerService) {}
 
-
-   @Post('create')
-  create(@Body() createUrlShortner: CreateUrlShortnerDto) {
-    return this.urlShortnerService.createUrlShortner(createUrlShortner);
+  @UseGuards(userGuard)
+  @Post('create') 
+  create(@Body() {originalUrl}: CreateUrlShortnerDto, @Req() req: Request) {
+    const userId = req?.['user']?._id;
+    return this.urlShortnerService.createUrlShortner(
+      originalUrl,
+      userId,
+    );
   }
 }

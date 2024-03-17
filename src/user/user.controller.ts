@@ -23,7 +23,7 @@ export class UserController {
   login(@Body() loginUserDto: LoginUserDto) {
     return this.userService.validateUser(
       loginUserDto.email,
-      loginUserDto.password,
+      loginUserDto.password, 
     );
   }
 }
