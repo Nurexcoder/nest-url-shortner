@@ -18,7 +18,7 @@ const hostUrl = process.env.NODE_ENV === 'anc' ? 'https://nest-url-shortner.onre
 
 @Injectable()
 export class UrlShortnerService {
-  private readonly TTL = 12 * 60 * 60;
+  private readonly TTL =  60 * 60;
   constructor(
     @InjectModel(UrlShortner.name)
     private urlShortnerModal: Model<UrlShortner>,
@@ -79,6 +79,7 @@ export class UrlShortnerService {
     let originalUrl = await this.redis.get(shortUrl);
     if (originalUrl) {
       await this.redis.zincrby('url_usage_counter', 1, originalUrl);
+      await this.redis.expire(shortUrl, this.TTL);
     } else {
       const accessedUrl = await this.urlShortnerModal
         .findOne({ shortUrl })
@@ -125,14 +126,15 @@ export class UrlShortnerService {
     if (!urlObj) {
       throw new NotFoundException('Not a valid ID');
     }
-    const analytics = await this.analyticsModal.findOne({ urlId: urlObj._id });
-    if (!analytics) {
-      return 'No analytics available';
-    }
     const analyticsDto = new AnalyticsDto();
     analyticsDto.urlId = urlObj._id;
     analyticsDto.originalUrl = urlObj.originalUrl;
     analyticsDto.shortUrl = this.generateShortUrlWithBase(urlObj.shortUrl);
+    const analytics = await this.analyticsModal.findOne({ shortUrl: urlObj.shortUrl });
+    if (!analytics) {
+      return analyticsDto;
+    }
+   
     analyticsDto.clicks = analytics.clicks;
     analyticsDto.devices = convertArrayToRecord(analytics.devices);
     analyticsDto.browsers = convertArrayToRecord(analytics.browsers);

@@ -7,16 +7,21 @@ import { AppController } from './app.controller';
 import { AppProvider } from './app.provider';
 import { ConfigModule } from '@nestjs/config';
 import { DeviceInfoService } from './middleware/accessInfo.middleware';
+import * as dotenv from 'dotenv';
+dotenv.config();
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true, ignoreEnvFile: true }),
-    MongooseModule.forRoot('mongodb://127.0.0.1:27017/urlshortner'),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: '.env',
+    }),
+    MongooseModule.forRoot(process.env.MONGO_CONNECTION_STRING),
     RedisModule.forRoot({
       type: 'single',
       url: 'redis-15442.c301.ap-south-1-1.ec2.cloud.redislabs.com:15442',
       options: {
-        password: 'ZZfWgjJd8bJuwV11Jtg8P6vn0wjazBpw',
+        password: process.env.REDIS_PASSWORD,
       },
     }),
 
