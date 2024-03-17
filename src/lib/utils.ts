@@ -16,9 +16,9 @@ export function getActiveHoursAndDates(dateStrings: Date[]): {
   const activeDates: Record<number, number> = {};
 
   dateStrings.forEach((dateString) => {
-    const date = new Date(dateString);
-    const hour = date.getHours();
-    const formatedDate = dayjs(date).format('YYYY-MM-DD');
+    const date =  dayjs(dateString);
+    const hour = date.format('h A');
+    const formatedDate = date.format('YYYY-MM-DD');
 
     activeHours[hour] = (activeHours[hour] || 0) + 1;
     activeDates[formatedDate] = (activeDates[formatedDate] || 0) + 1;
