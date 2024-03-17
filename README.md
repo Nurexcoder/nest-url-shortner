@@ -4,6 +4,10 @@
 
 This is a URL shortener application built with Nest.js and MongoDB. It allows users to shorten long URLs into shorter, more manageable ones and provide analytics analytics of the created url to the user. Used Redis to caached the mosted frequently accessed url.
 
+# Schema
+![image](https://github.com/Nurexcoder/nest-url-shortner/assets/56834526/b5aa1b93-c230-43d1-ac3a-6ad819b968bb)
+
+
 ## Prerequisites
 
 Before running this application, ensure you have the following installed on your system:
