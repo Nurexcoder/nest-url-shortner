@@ -6,12 +6,16 @@ import { UrlShortnerService } from './urlShortner.service';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([
-      { name: UrlShortner.name, schema: urlShortnerSchema },
-    ]),
+    MongooseModule.forFeature([{ name: UrlShortner.name, schema:urlShortnerSchema  }]),
   ],
-  controllers: [UrlShortnerController],
-  providers: [UrlShortnerService],
-  exports: [UrlShortnerService],
+  controllers: [
+    UrlShortnerController
+  ],
+  providers: [
+    UrlShortnerService
+  ],
+  exports: [
+    UrlShortnerService
+  ],
 })
 export class UrlShortnerModule {}
