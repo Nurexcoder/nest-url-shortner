@@ -13,9 +13,9 @@ export class UserService {
     const { name, password, email } = createUserDto;
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = new this.userModel({
-      name,
+        name,
       password: hashedPassword,
-      email,
+      email
     });
     return newUser.save();
   }
