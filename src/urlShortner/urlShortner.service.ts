@@ -14,11 +14,11 @@ import { DeviceInfoService } from 'src/middleware/accessInfo.middleware';
 import { DeviceInfo, InfoCount } from 'src/lib/types';
 import { convertArrayToRecord, getActiveHoursAndDates } from 'src/lib/utils';
 
-const hostUrl = process.env.NODE_ENV === 'anc' ? 'https://nest-url-shortner.onrender.com/' : 'http://localhost:3000';
+const hostUrl = process.env.HOST_URL || 'http://localhost:3000';
 
 @Injectable()
 export class UrlShortnerService {
-  private readonly TTL =  60 * 60;
+  private readonly TTL = 60 * 60;
   constructor(
     @InjectModel(UrlShortner.name)
     private urlShortnerModal: Model<UrlShortner>,
@@ -130,11 +130,13 @@ export class UrlShortnerService {
     analyticsDto.urlId = urlObj._id;
     analyticsDto.originalUrl = urlObj.originalUrl;
     analyticsDto.shortUrl = this.generateShortUrlWithBase(urlObj.shortUrl);
-    const analytics = await this.analyticsModal.findOne({ shortUrl: urlObj.shortUrl });
+    const analytics = await this.analyticsModal.findOne({
+      shortUrl: urlObj.shortUrl,
+    });
     if (!analytics) {
       return analyticsDto;
     }
-   
+
     analyticsDto.clicks = analytics.clicks;
     analyticsDto.devices = convertArrayToRecord(analytics.devices);
     analyticsDto.browsers = convertArrayToRecord(analytics.browsers);
