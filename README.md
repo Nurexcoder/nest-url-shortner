@@ -37,8 +37,10 @@ Before running this application, ensure you have the following installed on your
 1. Create a `.env` file in the root directory of the project:
 
    ```plaintext
-   MONGODB_URI=mongodb://localhost:27017/url_shortener
-   PORT=3000
+   HOST_URL=localhost:3000
+   ACCESS_TOKEN_SECRET= JWT_SEC
+   MONGO_CONNECTION_STRING=url mongo string
+   REDIS_PASSWORD=your redis passsword
    ```
 
    Adjust the MongoDB URI and port as necessary.
