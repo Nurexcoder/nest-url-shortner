@@ -9,14 +9,15 @@ export class UrlShortner extends Document {
   @Prop()
   shortUrl: string;
 
-  @Prop({ type: [{ type: SchemaType.Types.ObjectId, ref: 'User' }] })
-  userIds: string[];
+  @Prop({ type: { type: SchemaType.Types.ObjectId, ref: 'User' } })
+  userId: string;
+
   
   @Prop({ default: Date.now })
   createdAt: Date;
 
-  @Prop({ default: Date.now })
-  modifiedAt: Date;
+
+ 
 }
 
 export const urlShortnerSchema = SchemaFactory.createForClass(UrlShortner);

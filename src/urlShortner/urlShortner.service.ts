@@ -8,6 +8,8 @@ import * as base62 from 'base62';
 import { nanoid } from 'nanoid';
 import ShortUniqueId from 'short-unique-id';
 import { CreateUrlShortnerDto } from './dto/CreateUrlShortner.dto';
+import { Analytics } from 'src/schemas/Analytics.schema';
+import { AnalyticsDto } from './dto/Analytics.dto';
 
 const hostUrl = 'http://localhost:3000';
 
@@ -16,6 +18,7 @@ export class UrlShortnerService {
   constructor(
     @InjectModel(UrlShortner.name)
     private urlShortnerModal: Model<UrlShortner>,
+    @InjectModel(Analytics.name) private analyticsModal: Model<Analytics>,
   ) {}
 
   generateShortUrlWithBase(shortUrl: string) {
@@ -31,34 +34,33 @@ export class UrlShortnerService {
   async findOneByHash(urlId: string): Promise<UrlShortner | null> {
     return this.urlShortnerModal.findOne({ urlId }).exec();
   }
-  
+
   async createUrlShortner(
-      originalUrl: string,
-      userId: string
+    originalUrl: string,
+    userId: string,
   ): Promise<string> {
-   
     const isUrlExist = await this.urlShortnerModal
       .findOne({ originalUrl })
       .exec();
-    
 
     if (isUrlExist) {
-      isUrlExist.userIds.push(userId);
-      await isUrlExist.save();
       return this.generateShortUrlWithBase(isUrlExist.shortUrl);
     }
     let newOriginalUrl = originalUrl;
-    if (!originalUrl.startsWith('http://') && !originalUrl.startsWith('https://')) {
+    if (
+      !originalUrl.startsWith('http://') &&
+      !originalUrl.startsWith('https://')
+    ) {
       newOriginalUrl = `http://${originalUrl}`;
     }
 
     const urlId = await this.generateUniqueHash();
     const shortUrl = `${urlId}`;
-   
+
     const urlShortner = new this.urlShortnerModal({
-      originalUrl:newOriginalUrl,
+      originalUrl: newOriginalUrl,
       shortUrl,
-      userIds: [userId],
+      userId: userId,
     });
     const newUrlShortner = await urlShortner.save();
 
@@ -66,9 +68,32 @@ export class UrlShortnerService {
   }
 
   async getOriginalUrl(shortUrl: string): Promise<string | null> {
-    const originalUrl = (
-      await this.urlShortnerModal.findOne({ shortUrl }).exec()
-    ).originalUrl;
-    return originalUrl;
+    const accessedUrl = await this.urlShortnerModal
+      .findOne({ shortUrl })
+      .exec();
+    const originalUrl = accessedUrl.shortUrl;
+    return this.getOriginalUrl(originalUrl);
+    console.log(originalUrl)
+    const query = { urlId: accessedUrl._id };
+
+    const update = {
+      $push: { devices: 'desktop', accesses: new Date(), browsers: 'chrome' },
+      $inc: { clicks: 1 },
+    };
+
+    const options = { new: true };
+
+      // this.analyticsModal
+      // .findOneAndUpdate(query, update, options)
+      // .exec();
+
+  }
+
+  async getAllUrls(userId: string): Promise<UrlShortner[]> {
+    return await this.urlShortnerModal.find({ userId }).exec();
+  }
+
+  async getAnalytics(urlId: string): Promise<any> {
+    return await this.analyticsModal.findById(urlId);
   }
 }
