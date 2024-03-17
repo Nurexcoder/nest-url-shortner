@@ -30,6 +30,12 @@ export class UrlShortnerController {
 
   @UseGuards(userGuard)
 
+  @Get('analytics/all')
+  getAllAnalytics(@Req() req) {
+    const userId = req?.['user']?._id;
+    return this.urlShortnerService.getAllAnalytics(userId);
+  }
+
   @Get('analytics/:id')
   getAnalytics(@Param('id') id: string) {
     return this.urlShortnerService.getAnalytics(id);

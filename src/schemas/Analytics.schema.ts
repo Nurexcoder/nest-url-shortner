@@ -4,19 +4,22 @@ import { BrowserType, DeviceType } from 'src/lib/enum';
 
 @Schema()
 export class Analytics extends Document {
-  @Prop({ type: { type: SchemaType.Types.ObjectId, ref: 'UrlShortner' } })
+  @Prop({ type: { type: SchemaType.Types.ObjectId, ref: 'UrlShortner' ,required:true} })
   urlId: string;
 
-  @Prop()
+  @Prop({default:0})
   clicks: number;
 
-  @Prop()
-  devices: DeviceType[];
+  @Prop({default:[]})
+  devices: string[];
 
-  @Prop()
-  browsers: BrowserType[];
+  @Prop({default:[]})
+  browsers: string[];
 
-  @Prop()
+  @Prop({default:[]})
+  os:string[]
+
+  @Prop({default:[]})
   accesses: Date[];
 
   @Prop({ default: Date.now })

@@ -9,8 +9,10 @@ export class UrlShortner extends Document {
   @Prop()
   shortUrl: string;
 
-  @Prop({ type: { type: SchemaType.Types.ObjectId, ref: 'User' } })
+  @Prop({ type: { type: SchemaType.Types.ObjectId, ref: 'User' }, })
   userId: string;
+
+ 
 
   
   @Prop({ default: Date.now })

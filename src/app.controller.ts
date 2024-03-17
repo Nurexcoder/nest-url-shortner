@@ -14,6 +14,7 @@ import { AppProvider } from './app.provider';
 import { UrlShortnerService } from './urlShortner/urlShortner.service';
 import { userGuard } from './user/user.guard';
 import { DeviceInfoService } from './middleware/accessInfo.middleware';
+import { DeviceInfo } from './lib/types';
 
 @Controller('')
 export class AppController {
@@ -28,12 +29,16 @@ export class AppController {
     @Res() res,
     @Req() req,
   ): Promise<string> {
-    const userAgent=req.headers['user-agent']
-    console.log(userAgent)
-    const deviceInfo=this.deviceInfoService.getDeviceInformation(userAgent);
-    console.log(deviceInfo)
-
-    const originalUrl = await this.appProvider.getOriginalUrl(shortUrl);
+    const userAgent = req.headers['user-agent'];
+    console.log(userAgent);
+    const deviceInfo = this.deviceInfoService.getDeviceInformation(userAgent);
+    console.log(deviceInfo);
+    const structuredDeviceInfo:DeviceInfo = {
+      os: deviceInfo.os.name,
+      browser: deviceInfo.client.name,
+      device:deviceInfo.device.type
+    };
+    const originalUrl = await this.appProvider.getOriginalUrl(shortUrl,structuredDeviceInfo);
 
     return res.redirect(originalUrl);
   }
