@@ -1,26 +1,32 @@
-import { BadRequestException, Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Post } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/CreateUser.dto';
 import { LoginUserDto } from './dto/LoginUser.dto';
-import { userGuard } from './user.guard';
+import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 
+@ApiTags('users')
 @Controller('users')
 export class UserController {
   constructor(private userService: UserService) {}
   
   @Post('/signup')
-  createUser(@Body() createUserDto: CreateUserDto) {
+  @ApiOperation({ summary: 'Create a new user' })
+  @ApiResponse({ status: 201, description: 'User successfully created' })
+  @ApiResponse({ status: 400, description: 'Bad request' })
+  async createUser(@Body() createUserDto: CreateUserDto) {
     try {
-      return  this.userService.createUser(createUserDto);
-    }
-    catch{
+      const user = await this.userService.createUser(createUserDto);
+      return { message: 'User successfully created', user };
+    } catch (error) {
       throw new BadRequestException();
     }
-   
   }
 
   @Post('/signin')
-  login(@Body() loginUserDto: LoginUserDto) {
+  @ApiOperation({ summary: 'Authenticate user' })
+  @ApiResponse({ status: 200, description: 'User authenticated' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  async login(@Body() loginUserDto: LoginUserDto) {
     return this.userService.validateUser(
       loginUserDto.email,
       loginUserDto.password, 

@@ -16,6 +16,9 @@ import { userGuard } from './user/user.guard';
 import { DeviceInfoService } from './middleware/accessInfo.middleware';
 import { DeviceInfo } from './lib/types';
 
+import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+
+@ApiTags('')
 @Controller('')
 export class AppController {
   constructor(
@@ -23,16 +26,18 @@ export class AppController {
     private readonly deviceInfoService: DeviceInfoService,
   ) {}
 
+  @Get(':shortUrl')
+  @ApiOperation({ summary: 'Get original url' })
+  @ApiResponse({ status: 301, description: 'Redirect to Orginal Url'})
+  @ApiResponse({ status: 404, description: 'Url not found' })
   @Get('/:shortUrl')
   async getOriginalSite(
-    @Param('shortUrl') shortUrl,
+    @Param('shortUrl') shortUrl: string,
     @Res() res,
     @Req() req,
   ): Promise<string> {
     const userAgent = req.headers['user-agent'];
-    console.log(userAgent);
     const deviceInfo = this.deviceInfoService.getDeviceInformation(userAgent);
-    console.log(deviceInfo);
     const structuredDeviceInfo:DeviceInfo = {
       os: deviceInfo.os.name,
       browser: deviceInfo.client.name,

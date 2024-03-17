@@ -11,8 +11,6 @@ export class User {
   @Prop({unique:true})
   email: string;
 
-  @Prop()
-  avatarUrl?: string;
 }
 
 export const userSchema = SchemaFactory.createForClass(User);
