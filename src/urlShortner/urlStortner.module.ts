@@ -1,9 +1,10 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UrlShortner, urlShortnerSchema } from 'src/schemas/UrlShortner.schema';
 import { UrlShortnerController } from './urlShortner.controller';
 import { UrlShortnerService } from './urlShortner.service';
 import { Analytics, analyticsSchema } from 'src/schemas/Analytics.schema';
+import { DeviceInfoService } from 'src/middleware/accessInfo.middleware';
 
 @Module({
   imports: [
@@ -13,10 +14,13 @@ import { Analytics, analyticsSchema } from 'src/schemas/Analytics.schema';
     UrlShortnerController
   ],
   providers: [
-    UrlShortnerService
+    UrlShortnerService,
+    DeviceInfoService
   ],
   exports: [
     UrlShortnerService
   ],
 })
-export class UrlShortnerModule {}
+export class UrlShortnerModule {
+ 
+}

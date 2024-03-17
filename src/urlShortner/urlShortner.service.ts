@@ -10,6 +10,7 @@ import ShortUniqueId from 'short-unique-id';
 import { CreateUrlShortnerDto } from './dto/CreateUrlShortner.dto';
 import { Analytics } from 'src/schemas/Analytics.schema';
 import { AnalyticsDto } from './dto/Analytics.dto';
+import { DeviceInfoService } from 'src/middleware/accessInfo.middleware';
 
 const hostUrl = 'http://localhost:3000';
 
@@ -71,9 +72,7 @@ export class UrlShortnerService {
     const accessedUrl = await this.urlShortnerModal
       .findOne({ shortUrl })
       .exec();
-    const originalUrl = accessedUrl.shortUrl;
-    return this.getOriginalUrl(originalUrl);
-    console.log(originalUrl)
+    const originalUrl = accessedUrl.originalUrl;
     const query = { urlId: accessedUrl._id };
 
     const update = {
@@ -81,11 +80,12 @@ export class UrlShortnerService {
       $inc: { clicks: 1 },
     };
 
-    const options = { new: true };
+    const options = { upsert: true, new: true, setDefaultsOnInsert: true };
 
-      // this.analyticsModal
-      // .findOneAndUpdate(query, update, options)
-      // .exec();
+      this.analyticsModal
+      .findOneAndUpdate(query, update, options)
+      .exec();
+      return originalUrl;
 
   }
 
@@ -94,6 +94,6 @@ export class UrlShortnerService {
   }
 
   async getAnalytics(urlId: string): Promise<any> {
-    return await this.analyticsModal.findById(urlId);
+    return await this.analyticsModal.find();
   }
 }

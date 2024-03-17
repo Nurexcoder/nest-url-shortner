@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UserModule } from './user/users.module';
 import { UrlShortnerModule } from './urlShortner/urlStortner.module';
@@ -6,10 +6,11 @@ import { RedisModule } from '@nestjs-modules/ioredis';
 import { AppController } from './app.controller';
 import { AppProvider } from './app.provider';
 import { ConfigModule } from '@nestjs/config';
+import { DeviceInfoService } from './middleware/accessInfo.middleware';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({isGlobal: true, ignoreEnvFile: true,}),
+    ConfigModule.forRoot({ isGlobal: true, ignoreEnvFile: true }),
     MongooseModule.forRoot('mongodb://127.0.0.1:27017/urlshortner'),
     RedisModule.forRoot({
       type: 'single',
@@ -23,6 +24,6 @@ import { ConfigModule } from '@nestjs/config';
     UrlShortnerModule,
   ],
   controllers: [AppController],
-  providers: [AppProvider],
+  providers: [AppProvider, DeviceInfoService],
 })
 export class AppModule {}
