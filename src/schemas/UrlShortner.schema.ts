@@ -12,6 +12,8 @@ export class UrlShortner extends Document {
   @Prop({ type: { type: SchemaType.Types.ObjectId, ref: 'User' }, })
   userId: string;
 
+  
+
  
 
   

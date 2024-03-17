@@ -7,6 +7,9 @@ export class Analytics extends Document {
   @Prop({ type: { type: SchemaType.Types.ObjectId, ref: 'UrlShortner' ,required:true} })
   urlId: string;
 
+  @Prop({required:true})
+  shortUrl:string
+
   @Prop({default:0})
   clicks: number;
 

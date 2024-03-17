@@ -2,7 +2,7 @@ import { InjectRedis } from '@nestjs-modules/ioredis';
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Redis } from 'ioredis';
-import { Model } from 'mongoose';
+import { Model, MongooseQueryOptions } from 'mongoose';
 import { UrlShortner, urlShortnerSchema } from 'src/schemas/UrlShortner.schema';
 import * as base62 from 'base62';
 import { nanoid } from 'nanoid';
@@ -14,14 +14,16 @@ import { DeviceInfoService } from 'src/middleware/accessInfo.middleware';
 import { DeviceInfo, InfoCount } from 'src/lib/types';
 import { convertArrayToRecord, getActiveHoursAndDates } from 'src/lib/utils';
 
-const hostUrl = 'http://localhost:3000';
+const hostUrl = process.env.NODE_ENV === 'anc' ? 'https://nest-url-shortner.onrender.com/' : 'http://localhost:3000';
 
 @Injectable()
 export class UrlShortnerService {
+  private readonly TTL = 12 * 60 * 60;
   constructor(
     @InjectModel(UrlShortner.name)
     private urlShortnerModal: Model<UrlShortner>,
     @InjectModel(Analytics.name) private analyticsModal: Model<Analytics>,
+    @InjectRedis() private readonly redis: Redis,
   ) {}
 
   generateShortUrlWithBase(shortUrl: string) {
@@ -74,18 +76,25 @@ export class UrlShortnerService {
     shortUrl: string,
     deviceInfo: DeviceInfo,
   ): Promise<string | null> {
-    const accessedUrl = await this.urlShortnerModal
-      .findOne({ shortUrl })
-      .exec();
+    let originalUrl = await this.redis.get(shortUrl);
+    if (originalUrl) {
+      await this.redis.zincrby('url_usage_counter', 1, originalUrl);
+    } else {
+      const accessedUrl = await this.urlShortnerModal
+        .findOne({ shortUrl })
+        .exec();
 
-    if (!accessedUrl) {
-      throw new NotFoundException('Not a valid url');
+      if (!accessedUrl) {
+        throw new NotFoundException('Not a valid url');
+      }
+      originalUrl = accessedUrl.originalUrl;
+
+      await this.redis.set(shortUrl, originalUrl, 'EX', this.TTL);
     }
-    const originalUrl = accessedUrl.originalUrl;
 
-    const query = { urlId: accessedUrl._id };
+    const query = { shortUrl: shortUrl };
 
-    const update = {
+    const update: MongooseQueryOptions = {
       $push: {
         devices: deviceInfo.device,
         accesses: new Date(),
@@ -93,11 +102,13 @@ export class UrlShortnerService {
         os: deviceInfo.os,
       },
       $inc: { clicks: 1 },
+      $set: { shortUrl },
     };
 
     const options = { upsert: true, new: true, setDefaultsOnInsert: true };
 
-    this.analyticsModal.findOneAndUpdate(query, update, options).exec();
+    await this.analyticsModal.findOneAndUpdate(query, update, options).exec();
+
     return originalUrl;
   }
 
@@ -109,20 +120,19 @@ export class UrlShortnerService {
     return this.analyticsModal.find({ userId });
   }
 
-
   async getAnalytics(urlId: string): Promise<any> {
     const urlObj = await this.urlShortnerModal.findById(urlId);
     if (!urlObj) {
       throw new NotFoundException('Not a valid ID');
     }
-    const analytics = await this.analyticsModal.findOne({ urlId:urlObj._id });
+    const analytics = await this.analyticsModal.findOne({ urlId: urlObj._id });
     if (!analytics) {
       return 'No analytics available';
     }
     const analyticsDto = new AnalyticsDto();
     analyticsDto.urlId = urlObj._id;
-    analyticsDto.originalUrl=urlObj.originalUrl
-    analyticsDto.shortUrl=this.generateShortUrlWithBase(urlObj.shortUrl)
+    analyticsDto.originalUrl = urlObj.originalUrl;
+    analyticsDto.shortUrl = this.generateShortUrlWithBase(urlObj.shortUrl);
     analyticsDto.clicks = analytics.clicks;
     analyticsDto.devices = convertArrayToRecord(analytics.devices);
     analyticsDto.browsers = convertArrayToRecord(analytics.browsers);

@@ -7,7 +7,7 @@ import { DeviceInfo } from './lib/types';
 
 @Injectable()
 export class AppProvider {
-  constructor(private urlShortnerService: UrlShortnerService) {}
+  constructor(private urlShortnerService: UrlShortnerService ,) {}
 
   async getOriginalUrl(shortUrl: string,structuredDeviceInfo:DeviceInfo): Promise<string | null> {
     // return (await this.urlShortnerModal.findOne({ shortUrl }).exec()).originalUrl;
