@@ -15,7 +15,6 @@ Before running this application, ensure you have the following installed on your
 - Node.js
 - npm (Node Package Manager)
 - MongoDB
-- 
 
 ## Installation
 
