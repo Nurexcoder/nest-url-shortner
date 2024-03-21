@@ -62,7 +62,7 @@ The server will start listening for requests on the specified port (default is 3
 ## API Endpoints
 
 - **POST /users/signup**: Signup for user.
-- - **POST /users/signin**: Signin for user.
+- **POST /users/signin**: Signin for user.
 - **POST /urlShortner/create**: Shorten a URL. Requires authentication.
 - **GET /urlShortner/all**: Retrieve all shortened URLs. Requires authentication.
 - **GET /urlShortner/analytics/all**: Retrieve analytics for all shortened URLs. Requires authentication.
