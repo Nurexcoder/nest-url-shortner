@@ -8,7 +8,7 @@ import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 @Controller('users')
 export class UserController {
   constructor(private userService: UserService) {}
-  
+
   @Post('/signup')
   @ApiOperation({ summary: 'Create a new user' })
   @ApiResponse({ status: 201, description: 'User successfully created' })
@@ -29,7 +29,7 @@ export class UserController {
   async login(@Body() loginUserDto: LoginUserDto) {
     return this.userService.validateUser(
       loginUserDto.email,
-      loginUserDto.password, 
+      loginUserDto.password,
     );
   }
 }

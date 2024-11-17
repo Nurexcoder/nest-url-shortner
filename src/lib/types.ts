@@ -6,4 +6,4 @@ export type DeviceInfo = {
   device: string;
 };
 
-export type InfoCount = Record<string, number>
+export type InfoCount = Record<string, number>;

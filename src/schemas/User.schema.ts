@@ -5,12 +5,11 @@ export class User {
   @Prop()
   name: string;
 
-  @Prop({select:false})
+  @Prop({ select: false })
   password: string;
 
-  @Prop({unique:true})
+  @Prop({ unique: true })
   email: string;
-
 }
 
 export const userSchema = SchemaFactory.createForClass(User);

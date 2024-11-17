@@ -28,7 +28,7 @@ export class AppController {
 
   @Get(':shortUrl')
   @ApiOperation({ summary: 'Get original url' })
-  @ApiResponse({ status: 301, description: 'Redirect to Orginal Url'})
+  @ApiResponse({ status: 301, description: 'Redirect to Orginal Url' })
   @ApiResponse({ status: 404, description: 'Url not found' })
   @Get('/:shortUrl')
   async getOriginalSite(
@@ -38,12 +38,15 @@ export class AppController {
   ): Promise<string> {
     const userAgent = req.headers['user-agent'];
     const deviceInfo = this.deviceInfoService.getDeviceInformation(userAgent);
-    const structuredDeviceInfo:DeviceInfo = {
+    const structuredDeviceInfo: DeviceInfo = {
       os: deviceInfo.os.name,
       browser: deviceInfo.client.name,
-      device:deviceInfo.device.type
+      device: deviceInfo.device.type,
     };
-    const originalUrl = await this.appProvider.getOriginalUrl(shortUrl,structuredDeviceInfo);
+    const originalUrl = await this.appProvider.getOriginalUrl(
+      shortUrl,
+      structuredDeviceInfo,
+    );
 
     return res.redirect(originalUrl);
   }

@@ -1,17 +1,13 @@
 import { InjectRedis } from '@nestjs-modules/ioredis';
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Redis } from 'ioredis';
 import { Model, MongooseQueryOptions } from 'mongoose';
-import { UrlShortner, urlShortnerSchema } from 'src/schemas/UrlShortner.schema';
-import * as base62 from 'base62';
+import { UrlShortner } from 'src/schemas/UrlShortner.schema';
 import { nanoid } from 'nanoid';
-import ShortUniqueId from 'short-unique-id';
-import { CreateUrlShortnerDto } from './dto/CreateUrlShortner.dto';
 import { Analytics } from 'src/schemas/Analytics.schema';
 import { AnalyticsDto } from './dto/Analytics.dto';
-import { DeviceInfoService } from 'src/middleware/accessInfo.middleware';
-import { DeviceInfo, InfoCount } from 'src/lib/types';
+import { DeviceInfo } from 'src/lib/types';
 import { convertArrayToRecord, getActiveHoursAndDates } from 'src/lib/utils';
 
 const hostUrl = process.env.HOST_URL || 'http://localhost:3000';

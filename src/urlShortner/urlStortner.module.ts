@@ -8,19 +8,13 @@ import { DeviceInfoService } from 'src/middleware/accessInfo.middleware';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: UrlShortner.name, schema:urlShortnerSchema  },{name:Analytics.name,schema:analyticsSchema}]),
+    MongooseModule.forFeature([
+      { name: UrlShortner.name, schema: urlShortnerSchema },
+      { name: Analytics.name, schema: analyticsSchema },
+    ]),
   ],
-  controllers: [
-    UrlShortnerController
-  ],
-  providers: [
-    UrlShortnerService,
-    DeviceInfoService
-  ],
-  exports: [
-    UrlShortnerService
-  ],
+  controllers: [UrlShortnerController],
+  providers: [UrlShortnerService, DeviceInfoService],
+  exports: [UrlShortnerService],
 })
-export class UrlShortnerModule {
- 
-}
+export class UrlShortnerModule {}

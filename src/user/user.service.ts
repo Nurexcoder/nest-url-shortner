@@ -32,7 +32,7 @@ export class UserService {
       name,
       password: hashedPassword,
       email,
-    }); 
+    });
     await newUser.save();
     const payload = { sub: newUser._id, username: newUser.email };
 
@@ -42,9 +42,12 @@ export class UserService {
   }
 
   async validateUser(email: string, password: string): Promise<AccessToken> {
-    const user = await this.userModel.findOne({ email }).select('+password').exec();
+    const user = await this.userModel
+      .findOne({ email })
+      .select('+password')
+      .exec();
 
-    if (!user || !(await bcrypt.compare(password, user?.password ))) {      
+    if (!user || !(await bcrypt.compare(password, user?.password))) {
       throw new UnauthorizedException('Invalid email or Password');
     }
     const payload = { sub: user._id, username: user.email };

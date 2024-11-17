@@ -16,12 +16,8 @@ dotenv.config();
       signOptions: { expiresIn: '30d' },
     }),
   ],
-  controllers: [
-    UserController
-  ],
-  providers: [
-    UserService
-  ],
+  controllers: [UserController],
+  providers: [UserService],
   exports: [],
 })
 export class UserModule {}

@@ -1,4 +1,4 @@
-import * as  dayjs from 'dayjs';
+import * as dayjs from 'dayjs';
 import { InfoCount } from './types';
 
 export function convertArrayToRecord(arr: string[]): InfoCount {
@@ -16,7 +16,7 @@ export function getActiveHoursAndDates(dateStrings: Date[]): {
   const activeDates: Record<number, number> = {};
 
   dateStrings.forEach((dateString) => {
-    const date =  dayjs(dateString);
+    const date = dayjs(dateString);
     const hour = date.format('h A');
     const formatedDate = date.format('YYYY-MM-DD');
 

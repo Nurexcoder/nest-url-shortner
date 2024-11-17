@@ -9,7 +9,9 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe());
   const config = new DocumentBuilder()
     .setTitle('Url Shortner')
-    .setDescription('Please login or signup and add the authorization bearer token to continue to continue')
+    .setDescription(
+      'Please login or signup and add the authorization bearer token to continue to continue',
+    )
     .setVersion('1.0')
     .addTag('urlShortner')
     .addBearerAuth()
@@ -19,4 +21,3 @@ async function bootstrap() {
   await app.listen(process.env.Port || 3000);
 }
 bootstrap();
- 

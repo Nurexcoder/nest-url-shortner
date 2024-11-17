@@ -3,18 +3,18 @@ import * as DeviceDetector from 'device-detector-js';
 
 @Injectable()
 export class DeviceInfoService {
-private deviceDetector
+  private deviceDetector;
   constructor() {
-    // this.deviceDetector = 
+    // this.deviceDetector =
   }
 
   getDeviceInformation(userAgent: string) {
     try {
-        const deviceDetector = new DeviceDetector({});
-        return deviceDetector.parse(userAgent);
+      const deviceDetector = new DeviceDetector({});
+      return deviceDetector.parse(userAgent);
     } catch (error) {
-        console.log(error)
-        throw new BadRequestException()
+      console.log(error);
+      throw new BadRequestException();
     }
   }
 }

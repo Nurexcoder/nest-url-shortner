@@ -1,4 +1,4 @@
-import { MiddlewareConsumer, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UserModule } from './user/users.module';
 import { UrlShortnerModule } from './urlShortner/urlStortner.module';
@@ -19,7 +19,7 @@ dotenv.config();
     MongooseModule.forRoot(process.env.MONGO_CONNECTION_STRING),
     RedisModule.forRoot({
       type: 'single',
-      url: 'redis-15442.c301.ap-south-1-1.ec2.cloud.redislabs.com:15442',
+      url: process.env.REDIS_URL,
       options: {
         password: process.env.REDIS_PASSWORD,
       },
