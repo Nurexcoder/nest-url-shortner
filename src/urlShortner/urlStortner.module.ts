@@ -1,4 +1,4 @@
-import { MiddlewareConsumer, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UrlShortner, urlShortnerSchema } from 'src/schemas/UrlShortner.schema';
 import { UrlShortnerController } from './urlShortner.controller';

@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, HttpException, Post } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/CreateUser.dto';
 import { LoginUserDto } from './dto/LoginUser.dto';
@@ -16,9 +16,13 @@ export class UserController {
   async createUser(@Body() createUserDto: CreateUserDto) {
     try {
       const user = await this.userService.createUser(createUserDto);
-      return { message: 'User successfully created', user };
+      return { message: 'User successfully created', ...user };
     } catch (error) {
-      throw new BadRequestException();
+      if (error instanceof HttpException) {
+        // Rethrow recognized exceptions to keep their status and message
+        throw error;
+      }
+      throw new HttpException('Internal Server Error', 500);
     }
   }
 

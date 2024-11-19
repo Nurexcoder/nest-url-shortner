@@ -6,13 +6,10 @@ import { CreateUserDto } from './dto/CreateUser.dto';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 
-type JwtPayload = {
-  sub: string;
-  username: string;
-};
-
-type AccessToken = {
+type UserToken = {
   access_token: string;
+  name: string;
+  email: string;
 } | null;
 
 @Injectable()
@@ -22,10 +19,12 @@ export class UserService {
     private jwtService: JwtService,
   ) {}
 
-  async createUser(createUserDto: CreateUserDto): Promise<AccessToken> {
+  async createUser(createUserDto: CreateUserDto): Promise<UserToken> {
     const { name, password, email } = createUserDto;
     if (await this.userModel.findOne({ email })) {
-      throw new UnauthorizedException('User already exists');
+      throw new UnauthorizedException(
+        'User with this email already exists, Please Login',
+      );
     }
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = new this.userModel({
@@ -34,14 +33,19 @@ export class UserService {
       email,
     });
     await newUser.save();
-    const payload = { sub: newUser._id, username: newUser.email };
+    const userId = newUser._id.toString();
+    console.log(userId);
+    const payload = { sub: userId, username: newUser.email };
+    console.log(payload);
 
     return {
       access_token: await this.jwtService.signAsync(payload),
+      name: newUser.name,
+      email: newUser.email,
     };
   }
 
-  async validateUser(email: string, password: string): Promise<AccessToken> {
+  async validateUser(email: string, password: string): Promise<UserToken> {
     const user = await this.userModel
       .findOne({ email })
       .select('+password')
@@ -53,6 +57,8 @@ export class UserService {
     const payload = { sub: user._id, username: user.email };
     return {
       access_token: await this.jwtService.signAsync(payload),
+      name: user.name,
+      email: user.email,
     };
   }
 
